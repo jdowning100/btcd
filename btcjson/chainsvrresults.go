@@ -309,6 +309,29 @@ type GetBlockTemplateResult struct {
 	RejectReason string   `json:"reject-reason,omitempty"`
 }
 
+// GetShortBlockTemplateResult models the data returned from the
+// getshortblocktemplate command. This is a compact format suitable for
+// mining pools, containing only the essential data needed to construct
+// a block candidate.
+type GetShortBlockTemplateResult struct {
+	// HeaderBytes is the serialized block header with merkle root set to
+	// all zeros and nonce set to 0, encoded as hex string.
+	HeaderBytes string `json:"headerbytes"`
+
+	// CoinbaseValue is the total value available for the coinbase transaction
+	// in satoshis, including block subsidy and transaction fees.
+	CoinbaseValue int64 `json:"coinbasevalue"`
+
+	// Height is the block height for this template.
+	// This must be included in the coinbase transaction scriptSig (BIP 34).
+	Height int64 `json:"height"`
+
+	// MerklePath contains the merkle branch hashes needed to compute the
+	// merkle root given the coinbase transaction hash at index 0.
+	// Each hash is hex-encoded.
+	MerklePath []string `json:"merklepath"`
+}
+
 // GetMempoolEntryResult models the data returned from the getmempoolentry's
 // fee field
 

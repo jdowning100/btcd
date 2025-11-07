@@ -425,6 +425,38 @@ func NewGetBlockTemplateCmd(request *TemplateRequest) *GetBlockTemplateCmd {
 	}
 }
 
+// GetShortBlockTemplateCmd defines the getshortblocktemplate JSON-RPC command.
+// This command returns a compact block template suitable for mining pools,
+// containing only the header bytes (with zero merkle root and nonce), coinbase
+// value, and merkle branches needed to compute the merkle root.
+type GetShortBlockTemplateCmd struct{}
+
+// NewGetShortBlockTemplateCmd returns a new instance which can be used to issue a
+// getshortblocktemplate JSON-RPC command.
+func NewGetShortBlockTemplateCmd() *GetShortBlockTemplateCmd {
+	return &GetShortBlockTemplateCmd{}
+}
+
+// SubmitShortBlockTemplateCmd defines the submitshortblocktemplate JSON-RPC command.
+// This command reconstructs and submits a block from the compact format returned by
+// getshortblocktemplate, using the serialized header, coinbase transaction, and
+// merkle branches to look up the cached transaction list.
+type SubmitShortBlockTemplateCmd struct {
+	HeaderHex   string   `json:"headerhex"`
+	CoinbaseHex string   `json:"coinbasehex"`
+	MerklePath  []string `json:"merklepath"`
+}
+
+// NewSubmitShortBlockTemplateCmd returns a new instance which can be used to issue a
+// submitshortblocktemplate JSON-RPC command.
+func NewSubmitShortBlockTemplateCmd(headerHex string, coinbaseHex string, merklePath []string) *SubmitShortBlockTemplateCmd {
+	return &SubmitShortBlockTemplateCmd{
+		HeaderHex:   headerHex,
+		CoinbaseHex: coinbaseHex,
+		MerklePath:  merklePath,
+	}
+}
+
 // GetCFilterCmd defines the getcfilter JSON-RPC command.
 type GetCFilterCmd struct {
 	Hash       string
@@ -1121,6 +1153,7 @@ func init() {
 	MustRegisterCmd("getblockheader", (*GetBlockHeaderCmd)(nil), flags)
 	MustRegisterCmd("getblockstats", (*GetBlockStatsCmd)(nil), flags)
 	MustRegisterCmd("getblocktemplate", (*GetBlockTemplateCmd)(nil), flags)
+	MustRegisterCmd("getshortblocktemplate", (*GetShortBlockTemplateCmd)(nil), flags)
 	MustRegisterCmd("getcfilter", (*GetCFilterCmd)(nil), flags)
 	MustRegisterCmd("getcfilterheader", (*GetCFilterHeaderCmd)(nil), flags)
 	MustRegisterCmd("getchaintips", (*GetChainTipsCmd)(nil), flags)
@@ -1157,6 +1190,7 @@ func init() {
 	MustRegisterCmd("signmessagewithprivkey", (*SignMessageWithPrivKeyCmd)(nil), flags)
 	MustRegisterCmd("stop", (*StopCmd)(nil), flags)
 	MustRegisterCmd("submitblock", (*SubmitBlockCmd)(nil), flags)
+	MustRegisterCmd("submitshortblocktemplate", (*SubmitShortBlockTemplateCmd)(nil), flags)
 	MustRegisterCmd("uptime", (*UptimeCmd)(nil), flags)
 	MustRegisterCmd("validateaddress", (*ValidateAddressCmd)(nil), flags)
 	MustRegisterCmd("verifychain", (*VerifyChainCmd)(nil), flags)
